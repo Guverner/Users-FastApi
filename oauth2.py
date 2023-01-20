@@ -1,10 +1,13 @@
 from jose import JWTError, jwt
 from datetime import datetime, timedelta
-import schema
+import schema , model
 from fastapi import Depends, status, HTTPException
 from fastapi.security import OAuth2PasswordBearer
-from routers import get_db
 from sqlalchemy.orm import Session
+from config import get_db
+
+
+
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl='login')
 
@@ -32,8 +35,17 @@ def verify_access_token(token : str, credentials_exception):
 
         if id in None:
             raise credentials_exception
-        token.data = schema.TokenData(id=id)
+        token_data = schema.TokenData(id=id)
     except JWTError :
         raise credentials_exception
 
+    return token_data
 
+def get_current_employee(token : str = Depends(oauth2_scheme), db:Session = Depends(get_db)):
+    credentials_exception = HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail=f"cpuld not validate credentials",
+         headers={"WWW-Authenticate": "Bearer"})
+
+    token =  verify_access_token(token, credentials_exception)
+    employee = db.query(model.Employee).filter(model.Employee.id == token.id).filter()
+
+    return employee

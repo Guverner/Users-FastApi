@@ -1,21 +1,15 @@
 from fastapi import APIRouter, HTTPException, Path, Depends,status
-from config import SessionLocal
+from config import SessionLocal, get_db
 from sqlalchemy.orm import Session
 import model
 from sqlalchemy import func
-import schema, utils
+import schema, utils, oauth2
 
 
 
 router  = APIRouter()
 
 #db instance
-def get_db():
-    db = SessionLocal()
-    try:
-        yield db
-    finally:
-        db.close()
 
 
 # Creating new employee  
@@ -32,7 +26,7 @@ async def create_new_employee(request:schema.Create_Employee,db:Session = Depend
 
     """
 @router.post('/create/employee/', status_code=status.HTTP_201_CREATED,response_model=schema.Employee_Out, tags = ['employee'])
-async def create_new (new_emp:schema.Create_Employee, db : Session = Depends(get_db)):
+async def create_new (new_emp:schema.Create_Employee, db : Session = Depends(get_db), get_current_employee : int =(Depends(oauth2.get_current_employee))):
     ## (**new_emp.dict()) converting and unpacking basemodel to dict
 
     hashed_password = utils.hash(new_emp.password)
