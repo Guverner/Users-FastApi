@@ -29,7 +29,7 @@ async def login_or(employee_credentials: OAuth2PasswordRequestForm= Depends(), d
     if not utils.verify(employee_credentials.password,employee.password):
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail= 'Invalit Credentials')
 
-    accees_token = oauth2.create_access_token(data = {"user_id" : employee.id})
+    accees_token = oauth2.create_access_token(data = {"employee.id" : employee.id})
 
     return {"acces_token" : accees_token, "token_type" : "bearer"}
     from passlib.context import CryptContext

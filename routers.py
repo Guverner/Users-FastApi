@@ -26,7 +26,7 @@ async def create_new_employee(request:schema.Create_Employee,db:Session = Depend
 
     """
 @router.post('/create/employee/', status_code=status.HTTP_201_CREATED,response_model=schema.Employee_Out, tags = ['employee'])
-async def create_new (new_emp:schema.Create_Employee, db : Session = Depends(get_db), get_current_employee : int =(Depends(oauth2.get_current_employee))):
+async def create_new (new_emp:schema.Create_Employee, db : Session = Depends(get_db), get_current_employee : int =Depends(oauth2.get_current_employee)):
     ## (**new_emp.dict()) converting and unpacking basemodel to dict
 
     hashed_password = utils.hash(new_emp.password)
@@ -46,7 +46,7 @@ async def create_new (new_emp:schema.Create_Employee, db : Session = Depends(get
 #Get one employee by id
 
 @router.get('/one/employee/{id}/',status_code=status.HTTP_200_OK , tags = ['employee'])
-async def get_one_user(id: int, db:Session = Depends(get_db)):
+async def get_one_user(id: int, db:Session = Depends(get_db),get_current_employee : int =Depends(oauth2.get_current_employee)):
     # Creating query on model to filer employee with uniqe id
     employee = db.query(model.Employee).filter(model.Employee.id == id)
 
@@ -62,14 +62,14 @@ async def get_one_user(id: int, db:Session = Depends(get_db)):
 
 #Get all employees
 @router.get('/get/all/employees',tags=['employee'])
-async  def get_all_user(db : Session = Depends(get_db)):
+async  def get_all_user(db : Session = Depends(get_db),get_current_employee : int =Depends(oauth2.get_current_employee)):
     #Creating db query on model employee and calling all.
     return db.query(model.Employee).all()
 
     
 #Now we can update employee, if we need to change salary or status for some reason.
 @router.put('/update/employee{id}', response_model=schema.Employee, tags= ['employee'])
-async def update_one(id:int, update_emp : schema.Update_emp, db:Session = Depends(get_db)):
+async def update_one(id:int, update_emp : schema.Update_emp, db:Session = Depends(get_db),get_current_employee : int =Depends(oauth2.get_current_employee)):
 
     query_update = db.query(model.Employee).filter(model.Employee.id == id)
 
@@ -90,7 +90,7 @@ async def update_one(id:int, update_emp : schema.Update_emp, db:Session = Depend
 #Using simular code as updating
 
 @router.delete('/delete/employee/{id}',status_code=status.HTTP_204_NO_CONTENT , tags=['employee'])
-async def delete_user(id: int, db:Session = Depends(get_db )):
+async def delete_user(id: int, db:Session = Depends(get_db ),get_current_employee : int =Depends(oauth2.get_current_employee)):
 
     query_delete = db.query(model.Employee).filter(model.Employee.id == id)
 
