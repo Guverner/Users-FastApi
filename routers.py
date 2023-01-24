@@ -1,4 +1,4 @@
-from fastapi import APIRouter, HTTPException, Path, Depends,status
+from fastapi import APIRouter, HTTPException, Path, Depends,status, Response
 from config import SessionLocal, get_db
 from sqlalchemy.orm import Session
 import model
@@ -68,7 +68,7 @@ async  def get_all_user(db : Session = Depends(get_db),get_current_employee : in
 
     
 #Now we can update employee, if we need to change salary or status for some reason.
-@router.put('/update/employee{id}', response_model=schema.Employee, tags= ['employee'])
+@router.put('/update/employee/{id}', response_model=schema.Employee, tags= ['employee'])
 async def update_one(id:int, update_emp : schema.Update_emp, db:Session = Depends(get_db),get_current_employee : int =Depends(oauth2.get_current_employee)):
 
     query_update = db.query(model.Employee).filter(model.Employee.id == id)
@@ -95,13 +95,16 @@ async def delete_user(id: int, db:Session = Depends(get_db ),get_current_employe
     query_delete = db.query(model.Employee).filter(model.Employee.id == id)
 
     _delete = query_delete.first()
+
     if _delete == None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f'Employee with {id} not found')
     
-    else:
-        query_delete.delete(synchronize_session=False)
 
-        db.commit()
+    query_delete.delete(synchronize_session=False)
+
+    db.commit()
+
+    return Response(status_code=status.HTTP_204_NO_CONTENT)
         
 
 
