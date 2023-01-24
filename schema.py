@@ -57,7 +57,13 @@ class TokenData(BaseModel):
     
 
 
+#  TASK SHEMAS :
 
+class Task(BaseModel):
+    id : int
+    taks_name : str
+    task_content : str
+    status : bool = False
 
 
 
