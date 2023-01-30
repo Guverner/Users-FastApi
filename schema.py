@@ -14,6 +14,9 @@ class Create_Employee (BaseModel):
     join_date  : datetime
     salary : int
 
+
+  
+
 #Class that send data back to employee
 class Employee_Out(BaseModel):
     id : int
@@ -59,12 +62,23 @@ class TokenData(BaseModel):
 
 #  TASK SHEMAS :
 
-class Task(BaseModel):
-    id : int
-    taks_name : str
+class Task_In(BaseModel):
+    task_name : str
     task_content : str
     status : bool = False
+    createt_at : datetime
 
+class Task_Out(Task_In):
+    pass
 
-
+    class Config :
+        orm_mode = True
     
+class Task(Task_In):
+    id : int
+    owner_id : int
+    
+
+    class Config:
+        orm_mode = True
+

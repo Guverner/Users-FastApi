@@ -46,6 +46,6 @@ def get_current_employee(token : str = Depends(oauth2_scheme), db:Session = Depe
          headers={"WWW-Authenticate": "Bearer"})
 
     token =  verify_access_token(token, credentials_exception)
-    employee = db.query(model.Employee).filter(model.Employee.id == token.id).filter()
+    employee = db.query(model.Employee).filter(model.Employee.id == token.id).first()
 
     return employee

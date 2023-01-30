@@ -36,6 +36,7 @@ async def create_new (new_emp:schema.Create_Employee, db : Session = Depends(get
     db.add(new_employee)
     db.commit()
     db.refresh(new_employee)
+    
     return new_employee
 
 

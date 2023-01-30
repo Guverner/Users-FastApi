@@ -16,7 +16,7 @@ router = APIRouter(tags= ['Authentication'])
 
 @router.post('/login', response_model=schema.Token)
 async def login_or(employee_credentials: OAuth2PasswordRequestForm= Depends(), db:Session = Depends(get_db)):
-    employee = db.query(model.Employee).filter(model.Employee.email == employee_credentials.username).one_or_none()
+    employee = db.query(model.Employee).filter(model.Employee.email == employee_credentials.username).first()
     
     
     
