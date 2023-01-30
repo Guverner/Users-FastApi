@@ -11,7 +11,7 @@ router = APIRouter()
 
 
 @router.post("/create/task/" , status_code = status.HTTP_201_CREATED, response_model = schema.Task)
-def create_task(new :schema.Task_In, db: Session = Depends(get_db), current_employee : int =Depends(oauth2.get_current_employee)):
+async def create_task(new :schema.Task_In, db: Session = Depends(get_db), current_employee : int =Depends(oauth2.get_current_employee)):
 
    
    new_task = model.Tasks( owner_id = current_employee.id , **new.dict())
@@ -19,3 +19,20 @@ def create_task(new :schema.Task_In, db: Session = Depends(get_db), current_empl
    db.commit()
    db.refresh(new_task)
    return new_task
+
+
+# Get all tasks from single employee
+@router.get("/get/all/tasks", status_code= status.HTTP_200_OK)
+async def get_all_tasks(db:Session = Depends(get_db), current_employee : int = Depends(oauth2.get_current_employee)):
+
+   return(model.Tasks).all()
+
+
+#Get all tasks form single employee where status = False
+
+@router.get('/get/status/of/tasks/', status_code=status.HTTP_200_OK)
+async def get_status_tasks(db:Session = Depends(get_db), current_employee : int = Depends(oauth2.get_current_employee)):
+
+   status_task = db.query(model.Tasks).filter(model.Tasks.status == (False)).all()
+
+   return status_task
