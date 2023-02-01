@@ -95,9 +95,9 @@ async def delete_user(id: int, db:Session = Depends(get_db ),get_current_employe
 
     query_delete = db.query(model.Employee).filter(model.Employee.id == id)
 
-    _delete = query_delete.first()
+    delete = query_delete.first()
 
-    if _delete == None:
+    if delete == None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f'Employee with {id} not found')
     
 

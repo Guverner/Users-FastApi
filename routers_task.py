@@ -25,17 +25,24 @@ async def create_task(new :schema.Task_In, db: Session = Depends(get_db), curren
 @router.get("/get/all/tasks", status_code= status.HTTP_200_OK)
 async def get_all_tasks(db:Session = Depends(get_db), current_employee : int = Depends(oauth2.get_current_employee)):
 
-   return(model.Tasks).all()
+   query_task= db.query(model.Tasks).filter(model.Tasks.owner_id == current_employee.id)
+   task  = query_task.all()
 
+   if task == None :
+      raise HTTPException(status_code=status.HTTP_204_NO_CONTENT, detail= 'No content')
+
+   return task
 
 #Get all tasks form single employee where status = False
 
 @router.get('/get/status/of/tasks/', status_code=status.HTTP_200_OK)
 async def get_status_tasks(db:Session = Depends(get_db), current_employee : int = Depends(oauth2.get_current_employee)):
 
-   status_task = db.query(model.Tasks).filter(model.Tasks.status == (False)).all()
+   query_task = db.query(model.Tasks).filter(model.Tasks.status == (False), model.Tasks.owner_id == current_employee.id).offset(0)
+   task = query_task.all()
 
-   return status_task
+   
+   return task
 
 # Deleting task
 @router.delete('/delete/task/{id}', status_code=status.HTTP_204_NO_CONTENT)
@@ -49,7 +56,7 @@ async def delete_task(id : int, db:Session = Depends(get_db), current_employee :
 
    # If employee is not task owner, raise exception
    if task.owner_id != current_employee.id :
-      raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail= f'Not authoriyed to perform request action')
+      raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail= f'Not authorized to perform request action')
    
    task_query.delete(synchronize_session = False)
    db.commit()

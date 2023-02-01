@@ -73,7 +73,8 @@ class Task_Out(Task_In):
 
     class Config :
         orm_mode = True
-    
+        
+           
 class Task(Task_In):
     id : int
     owner_id : int
