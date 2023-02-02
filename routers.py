@@ -67,6 +67,8 @@ async  def get_all_user(db : Session = Depends(get_db),get_current_employee : in
     #Creating db query on model employee and calling all.
     return db.query(model.Employee).all()
 
+
+
     
 #Now we can update employee, if we need to change salary or status for some reason.
 @router.put('/update/employee/{id}', response_model=schema.Employee, tags= ['employee'])
@@ -74,9 +76,9 @@ async def update_one(id:int, update_emp : schema.Update_emp, db:Session = Depend
 
     query_update = db.query(model.Employee).filter(model.Employee.id == id)
 
-    _update = query_update.first()
+    update = query_update.first()
     #If there is no employee with disered id, raise 404
-    if _update == None:
+    if update == None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f'Employee with {id} not found')
     
     else:
@@ -105,7 +107,7 @@ async def delete_user(id: int, db:Session = Depends(get_db ),get_current_employe
 
     db.commit()
 
-    return Response(status_code=status.HTTP_204_NO_CONTENT)
+    return Response(status_code=status.HTTP_204_NO_CONTENT, detail = f'task with {id} deleted')
         
 
 

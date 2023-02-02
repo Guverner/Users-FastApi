@@ -57,29 +57,23 @@ class Token(BaseModel):
 
 class TokenData(BaseModel):
     id: Optional[str] = None
-    
 
 
 #  TASK SHEMAS :
-
+#    
 class Task_In(BaseModel):
     task_name : str
     task_content : str
     status : bool = False
     createt_at : datetime
+    class Config:
+        orm_mode = True
+
 
 class Task_Out(Task_In):
+    owner : Employee_Out
     pass
 
     class Config :
-        orm_mode = True
-        
-           
-class Task(Task_In):
-    id : int
-    owner_id : int
-    
-
-    class Config:
         orm_mode = True
 
