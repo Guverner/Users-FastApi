@@ -64,6 +64,9 @@ async def delete_task(id : int, db:Session = Depends(get_db), current_employee :
    # If employee is not task owner, raise exception
    if task.owner_id != current_employee.id :
       raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail= f'Not authorized to perform request action')
+
+   if task.status == False:
+      raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail= 'Cant delete unfinished task')
    
    task_query.delete(synchronize_session = False)
    db.commit()
